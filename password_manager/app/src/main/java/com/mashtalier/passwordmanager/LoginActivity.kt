@@ -57,23 +57,27 @@ class LoginActivity : AppCompatActivity() {
 
         val apiService = RetrofitClient.instance.create(ApiService::class.java)
 
-        // Make the login API call
         apiService.loginUser(loginRequest).enqueue(object : Callback<ApiResponse> {
             override fun onResponse(call: Call<ApiResponse>, response: Response<ApiResponse>) {
                 if (response.isSuccessful) {
-                    val message = response.body()?.message
-                    Toast.makeText(this@LoginActivity, message, Toast.LENGTH_SHORT).show()
+                    val user = response.body()?.user
+                    if (user != null) {
+                        val userId = user.id
+                        val fullName = user.full_name
+                        val email = user.email
 
-                    val fullName = response.body()?.user?.full_name ?: "Default Name"
-                    val email = response.body()?.user?.email ?: "Default Email"
+                        // Save user data
+                        userDataManager.saveUserData(userId, fullName, email)
 
-                    // Save the user data using UserDataManager
-                    userDataManager.saveUserData(fullName, email)
+                        Toast.makeText(this@LoginActivity, "Login successful!", Toast.LENGTH_SHORT).show()
 
-                    // Redirect to the MainActivity after successful login
-                    val intent = Intent(this@LoginActivity, MainActivity::class.java)
-                    startActivity(intent)
-                    finish()
+                        // Redirect to MainActivity
+                        val intent = Intent(this@LoginActivity, MainActivity::class.java)
+                        startActivity(intent)
+                        finish()
+                    } else {
+                        Toast.makeText(this@LoginActivity, "User data is missing", Toast.LENGTH_SHORT).show()
+                    }
                 } else {
                     val errorMessage = response.body()?.error ?: "Login failed"
                     Toast.makeText(this@LoginActivity, errorMessage, Toast.LENGTH_SHORT).show()
@@ -81,7 +85,6 @@ class LoginActivity : AppCompatActivity() {
             }
 
             override fun onFailure(call: Call<ApiResponse>, t: Throwable) {
-                // Handle network errors
                 Toast.makeText(this@LoginActivity, "Login failed: ${t.message}", Toast.LENGTH_SHORT).show()
             }
         })

@@ -62,7 +62,7 @@ class RegistrationActivity : AppCompatActivity() {
             }
 
             // Make API call
-            val user = User(fullName, email, password)
+            val user = User(0, fullName, email, password)
             apiService.registerUser(user).enqueue(object : Callback<ApiResponse> {
                 override fun onResponse(call: Call<ApiResponse>, response: Response<ApiResponse>) {
                     if (response.isSuccessful) {
