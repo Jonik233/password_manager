@@ -58,13 +58,14 @@ def login():
 
     conn = get_db_connection()
     cursor = conn.cursor()
-    cursor.execute("SELECT full_name, email, password FROM users WHERE email = %s", (email,))
+
+    cursor.execute("SELECT id, full_name, email, password FROM users WHERE email = %s", (email,))
     user = cursor.fetchone()
 
     if user is None:
         return jsonify({"error": "Invalid email"}), 400
 
-    stored_full_name, stored_email, stored_password = user
+    user_id, stored_full_name, stored_email, stored_password = user
 
     if not check_password_hash(stored_password, password):
         return jsonify({"error": "Invalid password"}), 400
@@ -72,10 +73,39 @@ def login():
     return jsonify({
         "message": "Login successful",
         "user": {
+            "id": user_id,
             "full_name": stored_full_name,
             "email": stored_email
         }
     }), 200
+    
+
+@app.route('/save_password', methods=['POST'])
+def save_password():
+    data = request.json
+    user_id = data['user_id']
+    title = data['title']
+    password = data['password']
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    try:
+        cursor.execute(
+            "INSERT INTO passwords (user_id, title, password) VALUES (%s, %s, %s) RETURNING id",
+            (user_id, title, password)
+        )
+        password_id = cursor.fetchone()[0]
+        conn.commit()
+        return jsonify({
+            "message": "Password saved successfully",
+            "password_id": password_id
+        }), 201
+    except Exception as e:
+        conn.rollback()
+        return jsonify({"error": str(e)}), 400
+    finally:
+        cursor.close()
+        conn.close()
 
 
 if __name__ == '__main__':
