@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Generador de Contraseñas</string>
+    <string name="title">Generador de Contraseñas</string>
+    <string name="length_label">Longitud: %1$d</string>
+    <string name="use_uppercase">Usar letras mayúsculas</string>
+    <string name="use_numbers">Usar números</string>
+    <string name="use_special_chars">Usar caracteres especiales</string>
+    <string name="generate_password">Generar Contraseña</string>
+    <string name="password_copied">Contraseña copiada al portapapeles</string>
+</resources>

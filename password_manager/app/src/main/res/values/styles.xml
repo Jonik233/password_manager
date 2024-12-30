@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="MyOutlinedImageButton" parent="Widget.AppCompat.ImageButton">
+        <item name="android:background">@drawable/my_outlined_image_button_background</item>
+    </style>
+</resources>
