@@ -9,7 +9,6 @@ object RetrofitClient {
 
     private const val BASE_URL = "http://10.0.2.2:5000/"
 
-    // Create Retrofit instance
     val instance: Retrofit by lazy {
         val logging = HttpLoggingInterceptor().apply {
             level = HttpLoggingInterceptor.Level.BODY
@@ -21,8 +20,8 @@ object RetrofitClient {
 
         Retrofit.Builder()
             .baseUrl(BASE_URL)
-            .client(okHttpClient) // Attach OkHttpClient
-            .addConverterFactory(GsonConverterFactory.create()) // JSON converter
+            .client(okHttpClient)
+            .addConverterFactory(GsonConverterFactory.create())
             .build()
     }
 }

@@ -28,4 +28,6 @@
     <string name="profile">Profile</string>
     <string name="username">Username</string>
     <string name="description">Description</string>
+    <string name="edit">Edit</string>
+    <string name="delete">Delete</string>
 </resources>
