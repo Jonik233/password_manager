@@ -108,5 +108,61 @@ def save_password():
         conn.close()
 
 
+@app.route('/get_passwords', methods=['GET'])
+def get_passwords():
+    user_id = request.args.get('user_id')
+    if not user_id:
+        return jsonify({"error": "User ID is required"}), 400
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    try:
+        cursor.execute("SELECT id, user_id, title, password FROM passwords WHERE user_id = %s", (user_id,))
+        rows = cursor.fetchall()
+
+        passwords = [
+            {"password_id":row[0], "user_id":row[1], "title": row[2], "password": row[3]}
+            for row in rows
+        ]
+
+        return jsonify({"passwords": passwords}), 200
+
+    except Exception as e:
+        return jsonify({"error": f"Failed to fetch passwords: {str(e)}"}), 500
+
+    finally:
+        cursor.close()
+        conn.close()
+
+
+@app.route('/delete_password', methods=['POST'])
+def delete_password():
+    user_id = request.args.get('user_id')
+    password_id = request.args.get('password_id')
+    
+    if not user_id or not password_id:
+        return jsonify({"error": "User ID and Password ID are required"}), 400
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    try:
+        cursor.execute("DELETE FROM passwords WHERE user_id = %s AND id = %s", (user_id, password_id))
+        conn.commit()
+
+        if cursor.rowcount == 0:
+            return jsonify({"error": "No matching password found"}), 404
+
+        return jsonify({"success": True, "message": "Password deleted"}), 200
+
+    except Exception as e:
+        print(f"Error: {str(e)}")
+        return jsonify({"error": "Failed to remove password"}), 500
+
+    finally:
+        cursor.close()
+        conn.close()
+
 if __name__ == '__main__':
     app.run()
