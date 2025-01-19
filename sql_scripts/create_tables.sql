@@ -8,7 +8,7 @@ CREATE TABLE users (
 
 CREATE TABLE passwords (
     id SERIAL PRIMARY KEY,
-    user_id INT UNIQUE NOT NULL,
+    user_id INT NOT NULL,
     title VARCHAR(255) NOT NULL,
     password VARCHAR(255) NOT NULL,
     date_of_creation TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
