@@ -164,5 +164,50 @@ def delete_password():
         cursor.close()
         conn.close()
 
+
+@app.route('/passwords/<int:passwordId>', methods=['PUT'])
+def update_password(passwordId):
+    userId = request.args.get('userId')
+    data = request.json
+
+    if not userId or not data:
+        return jsonify({"error": "User ID and request body are required"}), 400
+
+    title = data.get('title')
+    password = data.get('password')
+
+    if not title or not password:
+        return jsonify({"error": "Both title and password fields are required"}), 400
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    try:
+        cursor.execute(
+            """
+            UPDATE passwords 
+            SET title = %s, password = %s 
+            WHERE id = %s AND user_id = %s
+            """,
+            (title, password, passwordId, userId)
+        )
+        conn.commit()
+
+        if cursor.rowcount == 0:
+            return jsonify({"error": "No matching password found"}), 404
+
+        return jsonify({
+            "success": True,
+            "message": "Password updated successfully"
+        }), 200
+
+    except Exception as e:
+        conn.rollback()
+        return jsonify({"error": f"Failed to update password: {str(e)}"}), 500
+
+    finally:
+        cursor.close()
+        conn.close()
+
 if __name__ == '__main__':
     app.run()
