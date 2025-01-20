@@ -30,4 +30,6 @@
     <string name="description">Description</string>
     <string name="edit">Edit</string>
     <string name="delete">Delete</string>
+    <string name="edit_title">Enter Title</string>
+    <string name="edit_password">Enter Password</string>
 </resources>

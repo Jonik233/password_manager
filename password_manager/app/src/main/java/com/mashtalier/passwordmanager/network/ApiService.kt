@@ -4,6 +4,8 @@ import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.PUT
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 data class User(
@@ -58,5 +60,12 @@ interface ApiService {
     fun deletePassword(
         @Query("password_id") passwordId: Int,
         @Query("user_id") userId: Int
+    ): Call<ApiResponse>
+
+    @PUT("/passwords/{passwordId}")
+    fun updatePassword(
+        @Path("passwordId") passwordId: Int,
+        @Query("userId") userId: Int,
+        @Body updatedPassword: PasswordItem
     ): Call<ApiResponse>
 }
